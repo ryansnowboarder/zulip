@@ -202,12 +202,13 @@ function filter_users_by_search(users) {
     return filtered_users;
 }
 
-function actually_update_users() {
+function actually_update_users(user_list) {
     if (page_params.domain === 'mit.edu') {
         return;  // MIT realm doesn't have a presence list
     }
 
-    var users = Object.keys(presence_info);
+    var users = user_list || presence_info;
+    users = Object.keys(users);
     users = filter_users_by_search(users);
     users = _.filter(users, function (email) {
         return people.get_by_email(email);
@@ -239,8 +240,14 @@ function actually_update_users() {
     }
 
     var user_info = _.map(users, info_for);
-
-    $('#user_presences').html(templates.render('user_presence_rows', {users: user_info}));
+    if (user_list !== undefined) {
+        // Render right panel partially
+        $.each(user_info, function (index, user) {
+            $('#user_presences').find('[data-email=' + user.email + ']').replaceWith(templates.render('user_presence_row', user));
+        });
+    } else {
+        $('#user_presences').html(templates.render('user_presence_rows', {users: user_info}));
+    }
 
     // Update user fading, if necessary.
     compose_fade.update_faded_users();
@@ -395,14 +402,18 @@ exports.initialize = function () {
 // This rerenders the user sidebar at the end, which can be slow if done too
 // often, so try to avoid calling this repeatedly.
 exports.set_user_statuses = function (users, server_time) {
+    var updated_users = {};
+    var status;
     _.each(users, function (presence, email) {
         if (email === page_params.email) {
             return;
         }
-        presence_info[email] = status_from_timestamp(server_time, presence);
+        status = status_from_timestamp(server_time, presence);
+        presence_info[email] = status;
+        updated_users[email] = status;
     });
 
-    update_users();
+    update_users(updated_users);
     exports.update_huddles();
 };
 
