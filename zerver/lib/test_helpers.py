@@ -39,7 +39,7 @@ from six.moves import urllib
 from contextlib import contextmanager
 import six
 
-API_KEYS = {}
+API_KEYS = {} # type: Dict[str, str]
 
 @contextmanager
 def stub(obj, name, f):
