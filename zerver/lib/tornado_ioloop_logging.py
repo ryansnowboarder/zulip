@@ -6,6 +6,7 @@ import time
 import select
 from tornado import ioloop
 from django.conf import settings
+from typing import *
 
 try:
     # Tornado 2.4
@@ -37,7 +38,7 @@ except:
 class InstrumentedPoll(object):
     def __init__(self):
         self._underlying = orig_poll_impl()
-        self._times = []
+        self._times = [] # type: List[Tuple[float, float]]
         self._last_print = 0.0
 
     # Python won't let us subclass e.g. select.epoll, so instead

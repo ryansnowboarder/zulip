@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+from typing import *
 
 # This file needs to be different from cache.py because cache.py
 # cannot import anything from zerver.models or we'd have an import
@@ -75,7 +76,7 @@ cache_fillers = {
 def fill_memcached_cache(cache):
     memcached_time_start = get_memcached_time()
     memcached_requests_start = get_memcached_requests()
-    items_for_memcached = {}
+    items_for_memcached = {} # type: Dict[str, Any]
     (objects, items_filler, timeout, batch_size) = cache_fillers[cache]
     count = 0
     for obj in objects():

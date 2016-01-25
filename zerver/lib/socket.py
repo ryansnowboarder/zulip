@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+from typing import *
 
 from django.conf import settings
 from django.utils.importlib import import_module
@@ -226,7 +227,7 @@ class SocketConnection(sockjs.tornado.SockJSConnection):
         self.did_close = True
 
 def fake_message_sender(event):
-    log_data = dict()
+    log_data = dict() # type: Dict[str, Any]
     record_request_start_data(log_data)
 
     req = event['request']

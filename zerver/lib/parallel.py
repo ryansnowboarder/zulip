@@ -5,9 +5,11 @@ import os
 import pty
 import sys
 import errno
+from typing import *
 
 def run_parallel(job, data, threads=6):
-    pids = {}
+    # type: (Any, Iterable[Any], int) -> Generator[Tuple[int, Any], None, None]
+    pids = {} # type: Dict[int, Any]
 
     def wait_for_one():
         while True:

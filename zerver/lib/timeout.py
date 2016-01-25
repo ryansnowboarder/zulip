@@ -6,6 +6,7 @@ import ctypes
 import threading
 import six
 from six.moves import range
+from typing import *
 
 # Based on http://code.activestate.com/recipes/483752/
 
@@ -33,8 +34,8 @@ def timeout(timeout, func, *args, **kwargs):
     class TimeoutThread(threading.Thread):
         def __init__(self):
             threading.Thread.__init__(self)
-            self.result = None
-            self.exc_info = None
+            self.result = None # type: Any
+            self.exc_info = None # type: Tuple[type, BaseException, Any]
 
             # Don't block the whole program from exiting
             # if this is the only thread left.

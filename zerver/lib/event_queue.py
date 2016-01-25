@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+from typing import *
 
 from django.conf import settings
 from django.utils.timezone import now
@@ -56,8 +57,8 @@ class ClientDescriptor(object):
         self.user_profile_id = user_profile_id
         self.user_profile_email = user_profile_email
         self.realm_id = realm_id
-        self.current_handler_id = None
-        self.current_client_name = None
+        self.current_handler_id = None # type: int
+        self.current_client_name = None # type: str
         self.event_queue = event_queue
         self.queue_timeout = lifespan_secs
         self.event_types = event_types
@@ -183,7 +184,7 @@ class ClientDescriptor(object):
         # they can cleanup their own state related to the GC'd event queue.
         self.finish_current_handler()
 
-descriptors_by_handler_id = {}
+descriptors_by_handler_id = {} # type: Dict[int, ClientDescriptor]
 
 def get_descriptor_by_handler_id(handler_id):
     return descriptors_by_handler_id.get(handler_id)
@@ -204,10 +205,11 @@ def compute_full_event_type(event):
 
 class EventQueue(object):
     def __init__(self, id):
-        self.queue = deque()
+        # type: (Any) -> None
+        self.queue = deque() # type: deque[Dict[str, str]]
         self.next_event_id = 0
         self.id = id
-        self.virtual_events = {}
+        self.virtual_events = {} # type: Dict[str, Dict[str, str]]
 
     def to_dict(self):
         # If you add a new key to this dict, make sure you add appropriate
@@ -287,7 +289,7 @@ class EventQueue(object):
         return contents
 
 # maps queue ids to client descriptors
-clients = {} # type: Dict[int, ClientDescriptor]
+clients = {} # type: Dict[str, ClientDescriptor]
 # maps user id to list of client descriptors
 user_clients = {} # type: Dict[int, List[ClientDescriptor]]
 # maps realm id to list of client descriptors with all_public_streams=True
