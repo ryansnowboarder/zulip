@@ -28,8 +28,9 @@ import pylibmc
 import re
 import ujson
 import logging
+from typing import *
 
-bugdown = None
+bugdown = None # type: Any
 
 MAX_SUBJECT_LENGTH = 60
 MAX_MESSAGE_LENGTH = 10000
@@ -142,9 +143,10 @@ class Realm(models.Model):
         except IndexError:
             return None
 
-    @deployment.setter
+    @deployment.setter # type: ignore
     def set_deployments(self, value):
-        self._deployments = [value]
+        # type: (Any) -> None
+        self._deployments = [value] # type: Any
 
     def get_admin_users(self):
         # This method is kind of expensive, due to our complex permissions model.
@@ -256,7 +258,8 @@ def realm_filters_for_domain_memcached(domain):
     return filters
 
 def all_realm_filters():
-    filters = defaultdict(list)
+    # type: () -> Dict[str, List[Tuple[str, str]]]
+    filters = defaultdict(list) # type: Dict[str, List[Tuple[str, str]]]
     for realm_filter in RealmFilter.objects.all():
        filters[realm_filter.realm.domain].append((realm_filter.pattern, realm_filter.url_format_string))
 
@@ -371,7 +374,7 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
     # [["social", "mit"], ["devel", "ios"]]
     muted_topics = models.TextField(default=ujson.dumps([]))
 
-    objects = UserManager()
+    objects = UserManager() # type: UserManager
 
     def can_admin_user(self, target_user):
         """Returns whether this user has permission to modify target_user"""
@@ -542,7 +545,7 @@ class Recipient(models.Model):
     type = models.PositiveSmallIntegerField(db_index=True)
     # Valid types are {personal, stream, huddle}
     PERSONAL = 1
-    STREAM = 2
+    STREAM = 2 # type: int # https://github.com/JukkaL/mypy/issues/1194
     HUDDLE = 3
 
     class Meta(object):
@@ -699,8 +702,8 @@ class Message(models.Model):
 
         self.mentions_wildcard = False
         self.is_me_message = False
-        self.mentions_user_ids = set()
-        self.user_ids_with_alert_words = set()
+        self.mentions_user_ids = set() # type: Set[int]
+        self.user_ids_with_alert_words = set() # type: Set[int]
 
         if not domain:
             domain = self.sender.realm.domain
@@ -1131,6 +1134,7 @@ def get_realm(domain):
 
 def clear_database():
     pylibmc.Client(['127.0.0.1']).flush_all()
+    model = None # type: Any
     for model in [Message, Stream, UserProfile, Recipient,
                   Realm, Subscription, Huddle, UserMessage, Client,
                   DefaultStream]:
@@ -1173,7 +1177,8 @@ class UserPresence(models.Model):
 
     @staticmethod
     def get_status_dict_by_realm(realm_id):
-        user_statuses = defaultdict(dict)
+        # type: (Any) -> Any
+        user_statuses = defaultdict(dict) # type: Dict[Any, Dict[Any, Any]]
 
         query = UserPresence.objects.filter(
                 user_profile__realm_id=realm_id,
