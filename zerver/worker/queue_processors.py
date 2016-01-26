@@ -56,7 +56,7 @@ def get_active_worker_queues():
     return list(worker_classes.keys())
 
 class QueueProcessingWorker(object):
-    queue_name = None
+    queue_name = None # type: str
 
     def __init__(self):
         self.q = SimpleQueueClient()
