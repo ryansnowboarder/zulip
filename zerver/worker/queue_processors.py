@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+from typing import *
 
 from django.conf import settings
 from django.core.handlers.wsgi import WSGIRequest
@@ -175,7 +176,7 @@ class MissedMessageWorker(QueueProcessingWorker):
     def start(self):
         while True:
             missed_events = self.q.drain_queue("missedmessage_emails", json=True)
-            by_recipient = defaultdict(list)
+            by_recipient = defaultdict(list) # type: Dict[int, List[Dict[str, Any]]]
 
             for event in missed_events:
                 logging.info("Received event: %s" % (event,))
