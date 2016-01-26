@@ -334,7 +334,8 @@ def internal_notify_view(view_func):
 
 class JsonableError(Exception):
     def __init__(self, error):
-        self.error = error
+        # type: (str) -> None
+        self.error = error # type: str # https://github.com/JukkaL/mypy/issues/1194
 
     def __str__(self):
         return self.to_json_error_msg()
