@@ -26,10 +26,9 @@ class DecoratorTestCase(TestCase):
             return sum(numbers)
 
         class Request(object):
-            pass
+            REQUEST = {} # type: Dict[str, str]
 
         request = Request()
-        request.REQUEST = {}
 
         with self.assertRaises(RequestVariableMissingError):
             get_total(request)
@@ -55,10 +54,9 @@ class DecoratorTestCase(TestCase):
             return sum(numbers)
 
         class Request(object):
-            pass
+            REQUEST = {} # type: Dict[str, str]
 
         request = Request()
-        request.REQUEST = {}
 
         with self.assertRaises(RequestVariableMissingError):
             get_total(request)
@@ -82,22 +80,22 @@ class ValidatorTestCase(TestCase):
         x = "hello"
         self.assertEqual(check_string('x', x), None)
 
-        x = 4
-        self.assertEqual(check_string('x', x), 'x is not a string')
+        y = 4
+        self.assertEqual(check_string('y', y), 'y is not a string')
 
     def test_check_bool(self):
         x = True
         self.assertEqual(check_bool('x', x), None)
 
-        x = 4
-        self.assertEqual(check_bool('x', x), 'x is not a boolean')
+        y = 4
+        self.assertEqual(check_bool('y', y), 'y is not a boolean')
 
     def test_check_int(self):
         x = 5
         self.assertEqual(check_int('x', x), None)
 
-        x = [{}]
-        self.assertEqual(check_int('x', x), 'x is not an integer')
+        y = [{}] # type: List[Dict[Any, Any]]
+        self.assertEqual(check_int('y', y), 'y is not an integer')
 
     def test_check_list(self):
         x = 999
