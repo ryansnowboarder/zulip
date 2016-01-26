@@ -6,6 +6,7 @@ import os
 import sys
 
 import itertools
+from typing import *
 
 def version():
     version_py = os.path.join(os.path.dirname(__file__), "zulip", "__init__.py")
@@ -16,6 +17,7 @@ def version():
     return version
 
 def recur_expand(target_root, dir):
+    # type: (Any, Any) -> Generator[Tuple[str, List[str]], None, None]
     for root, _, files in os.walk(dir):
         paths = [os.path.join(root, f) for f in files]
         if len(paths):
