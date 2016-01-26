@@ -1,6 +1,7 @@
 # Webhooks for external integrations.
 
 from __future__ import absolute_import
+from typing import *
 
 from django.conf import settings
 from zerver.models import UserProfile, get_client, get_user_profile_by_email
@@ -907,7 +908,7 @@ def build_pagerduty_formatdict(message):
     # Normalize the message dict, after this all keys will exist. I would
     # rather some strange looking messages than dropping pages.
 
-    format_dict = {}
+    format_dict = {} # type: Dict[str, Any]
     format_dict['action'] = PAGER_DUTY_EVENT_NAMES[message['type']]
 
     format_dict['incident_id'] = message['data']['incident']['id']

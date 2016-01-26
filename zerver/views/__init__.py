@@ -67,6 +67,7 @@ import hashlib
 import hmac
 
 from zerver.lib.rest import rest_dispatch as _rest_dispatch
+from typing import *
 rest_dispatch = csrf_exempt((lambda request, *args, **kwargs: _rest_dispatch(request, globals(), *args, **kwargs)))
 
 def name_changes_disabled(realm):
@@ -704,7 +705,7 @@ def home(request):
     request._email = request.user.email
     request.client = get_client("website")
 
-    narrow = []
+    narrow = [] # type: List[List[str]]
     narrow_stream = None
     narrow_topic = request.GET.get("topic")
     if request.GET.get("stream"):
@@ -1101,7 +1102,8 @@ def create_user_backend(request, user_profile, email=REQ, password=REQ,
 @require_post
 @has_request_variables
 def api_fetch_api_key(request, username=REQ, password=REQ):
-    return_data = {}
+    # type: (Any, Any, Any) -> Any
+    return_data = {} # type: Dict[str, bool]
     if username == "google-oauth2-token":
         user_profile = authenticate(google_oauth2_token=password, return_data=return_data)
     else:

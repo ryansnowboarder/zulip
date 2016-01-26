@@ -550,9 +550,9 @@ def get_old_messages_backend(request, user_profile,
     # rendered message dict before returning it.  We attempt to
     # bulk-fetch rendered message dicts from memcached using the
     # 'messages' list.
-    search_fields = dict()
-    message_ids = []
-    user_message_flags = {}
+    search_fields = dict() # type: Dict[int, Dict[str, str]]
+    message_ids = [] # type: List[int]
+    user_message_flags = {} # type: Dict[int, List[str]]
     if include_history:
         message_ids = [row[0] for row in query_result]
 
