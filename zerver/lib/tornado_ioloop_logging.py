@@ -10,9 +10,9 @@ from typing import *
 
 try:
     # Tornado 2.4
-    orig_poll_impl = ioloop._poll
+    orig_poll_impl = ioloop._poll # type: ignore # TODO: address stub issue
     def instrument_tornado_ioloop():
-        ioloop._poll = InstrumentedPoll
+        ioloop._poll = InstrumentedPoll # type: ignore # TODO: address stub issue
 except:
     # Tornado 3
     from tornado.ioloop import IOLoop, PollIOLoop
@@ -21,7 +21,7 @@ except:
     # be epoll.
     orig_poll_impl = select.epoll
     class InstrumentedPollIOLoop(PollIOLoop):
-        def initialize(self, **kwargs):
+        def initialize(self, **kwargs): # type: ignore # TODO likely buggy monkey patching?
             super(InstrumentedPollIOLoop, self).initialize(impl=InstrumentedPoll(), **kwargs)
 
     def instrument_tornado_ioloop():
