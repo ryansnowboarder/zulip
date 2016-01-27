@@ -1047,7 +1047,7 @@ def _sanitize_for_log(md):
 
 # Filters such as UserMentionPattern need a message, but python-markdown
 # provides no way to pass extra params through to a pattern. Thus, a global.
-current_message = None # type: Message
+current_message = None # type: Any # Should be Message but bugdown doesn't import models.py.
 
 # We avoid doing DB queries in our markdown thread to avoid the overhead of
 # opening a new DB connection. These connections tend to live longer than the
