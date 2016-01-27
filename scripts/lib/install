@@ -28,6 +28,8 @@ if [ -e "/etc/init.d/nginx" ]; then
     service nginx restart
 fi
 
+pip install typing # Unacceptable but needed to pass CI for now
+
 /root/zulip/scripts/setup/generate_secrets.py
 cp -a /root/zulip/zproject/local_settings_template.py /etc/zulip/settings.py
 ln -nsf /etc/zulip/settings.py /root/zulip/zproject/local_settings.py
