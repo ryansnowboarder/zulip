@@ -2,6 +2,7 @@ from __future__ import absolute_import
 from __future__ import print_function
 
 from django.conf import settings
+from typing import *
 settings.RUNNING_INSIDE_TORNADO = True
 # We must call zerver.lib.tornado_ioloop_logging.instrument_tornado_ioloop
 # before we import anything else from our project in order for our
@@ -22,7 +23,7 @@ from zerver.lib.debug import interactive_debug_listen
 from zerver.lib.response import json_response
 from zerver.lib.event_queue import process_notification, missedmessage_hook
 from zerver.lib.event_queue import setup_event_queue, add_client_gc_hook, \
-    get_descriptor_by_handler_id
+    get_descriptor_by_handler_id, ClientDescriptor
 from zerver.lib.handlers import allocate_handler_id
 from zerver.lib.queue import setup_tornado_rabbitmq
 from zerver.lib.socket import get_sockjs_router, respond_send_message
@@ -143,14 +144,14 @@ class AsyncDjangoHandler(tornado.web.RequestHandler, base.BaseHandler):
 
         # Set up middleware if needed. We couldn't do this earlier, because
         # settings weren't available.
-        self._request_middleware = None
+        self._request_middleware = None # type: ignore # Should be List[Callable[[WSGIRequest], Any]] https://github.com/JukkaL/mypy/issues/1174
         self.initLock.acquire()
         # Check that middleware is still uninitialised.
         if self._request_middleware is None:
             self.load_middleware()
         self.initLock.release()
         self._auto_finish = False
-        self.client_descriptor = None
+        self.client_descriptor = None # type: ClientDescriptor
         allocate_handler_id(self)
 
     def get(self, *args, **kwargs):
@@ -174,7 +175,7 @@ class AsyncDjangoHandler(tornado.web.RequestHandler, base.BaseHandler):
             self.set_header(h[0], h[1])
 
         if not hasattr(self, "_new_cookies"):
-            self._new_cookies = []
+            self._new_cookies = [] # type: List[http.cookie.SimpleCookie]
         self._new_cookies.append(response.cookies)
 
         self.write(response.content)
