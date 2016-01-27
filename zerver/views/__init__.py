@@ -997,7 +997,7 @@ def export(request, user_profile):
                            ("realmalias", RealmAlias),
                            ("realmfilter", RealmFilter)]:
         response["zerver_"+table] = [model_to_dict(x) for x in
-                                     model.objects.select_related().filter(realm_id=user_profile.realm.id)]
+                                     model.objects.select_related().filter(realm_id=user_profile.realm.id)] # type: ignore
 
     return json_success(response)
 
