@@ -1,6 +1,8 @@
 from __future__ import absolute_import
 from __future__ import print_function
 
+from typing import *
+
 from django.conf import settings
 from django.core import validators
 from django.contrib.sessions.models import Session
@@ -70,8 +72,6 @@ import platform
 import logging
 import itertools
 from collections import defaultdict
-
-from typing import *
 
 # Store an event in the log for re-importing messages
 def log_event(event):

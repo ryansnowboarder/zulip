@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+from typing import *
 
 from collections import defaultdict
 import datetime
@@ -13,7 +14,6 @@ from zerver.models import UserProfile, UserMessage, Recipient, Stream, \
     Subscription, get_active_streams
 
 import logging
-from typing import *
 
 log_format = "%(asctime)s: %(message)s"
 logging.basicConfig(format=log_format)

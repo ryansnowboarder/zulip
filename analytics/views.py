@@ -1,5 +1,7 @@
 from __future__ import absolute_import
 from __future__ import division
+from typing import *
+
 from django.db import connection
 from django.template import RequestContext, loader
 from django.utils.html import mark_safe
@@ -21,7 +23,6 @@ from six.moves import filter
 from six.moves import map
 from six.moves import range
 from six.moves import zip
-from typing import *
 eastern_tz = pytz.timezone('US/Eastern')
 
 def make_table(title, cols, rows, has_row_class=False):

@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+from typing import *
 
 import sys
 import time
@@ -6,7 +7,6 @@ import ctypes
 import threading
 import six
 from six.moves import range
-from typing import *
 
 # Based on http://code.activestate.com/recipes/483752/
 

@@ -1,8 +1,8 @@
 from __future__ import absolute_import
 from __future__ import print_function
+from typing import *
 
 from django.conf import settings
-from typing import *
 settings.RUNNING_INSIDE_TORNADO = True
 # We must call zerver.lib.tornado_ioloop_logging.instrument_tornado_ioloop
 # before we import anything else from our project in order for our

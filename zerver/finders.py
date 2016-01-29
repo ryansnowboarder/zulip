@@ -1,8 +1,8 @@
 from __future__ import absolute_import
+from typing import *
 
 import re
 from django.contrib.staticfiles.finders import FileSystemFinder
-from typing import *
 
 class ExcludeUnminifiedMixin(object):
     """ Excludes unminified copies of our JavaScript code, templates

@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+from typing import *
 
 from django.conf import settings
 from django.db import transaction
@@ -26,7 +27,6 @@ import ujson
 from six.moves import urllib
 
 from zerver.lib.rest import rest_dispatch as _rest_dispatch
-from typing import *
 rest_dispatch = csrf_exempt((lambda request, *args, **kwargs: _rest_dispatch(request, globals(), *args, **kwargs)))
 
 def list_to_streams(streams_raw, user_profile, autocreate=False, invite_only=False):

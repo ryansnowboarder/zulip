@@ -1,12 +1,12 @@
 from __future__ import absolute_import
 from __future__ import division
+from typing import *
 
 import logging
 import time
 import select
 from tornado import ioloop
 from django.conf import settings
-from typing import *
 
 try:
     # Tornado 2.4

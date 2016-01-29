@@ -2,11 +2,12 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function
+from typing import *
+
 import os
 import sys
 
 import itertools
-from typing import *
 
 def version():
     version_py = os.path.join(os.path.dirname(__file__), "zulip", "__init__.py")

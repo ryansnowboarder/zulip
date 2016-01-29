@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+from typing import *
 
 from django.db import models
 from django.conf import settings
@@ -28,7 +29,6 @@ import pylibmc
 import re
 import ujson
 import logging
-from typing import *
 
 bugdown = None # type: Any
 

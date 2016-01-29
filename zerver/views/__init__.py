@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+from typing import *
 
 from django.conf import settings
 from django.contrib.auth import authenticate, login, get_backends
@@ -67,7 +68,6 @@ import hashlib
 import hmac
 
 from zerver.lib.rest import rest_dispatch as _rest_dispatch
-from typing import *
 rest_dispatch = csrf_exempt((lambda request, *args, **kwargs: _rest_dispatch(request, globals(), *args, **kwargs)))
 
 def name_changes_disabled(realm):

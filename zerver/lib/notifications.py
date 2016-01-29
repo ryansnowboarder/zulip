@@ -1,4 +1,6 @@
 from __future__ import print_function
+from typing import *
+
 from confirmation.models import Confirmation
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
@@ -15,7 +17,6 @@ import subprocess
 import ujson
 from six.moves import urllib
 from collections import defaultdict
-from typing import *
 
 def unsubscribe_token(user_profile):
     # Leverage the Django confirmations framework to generate and track unique

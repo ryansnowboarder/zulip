@@ -1,4 +1,6 @@
 from __future__ import absolute_import
+from typing import *
+
 from django.test import TestCase
 
 from zerver.lib.initial_password import initial_password
@@ -38,8 +40,6 @@ from six.moves import urllib
 
 from contextlib import contextmanager
 import six
-
-from typing import *
 
 API_KEYS = {} # type: Dict[str, str]
 

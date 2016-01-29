@@ -1,11 +1,11 @@
 from __future__ import absolute_import
 from __future__ import print_function
+from typing import *
 
 import os
 import pty
 import sys
 import errno
-from typing import *
 
 def run_parallel(job, data, threads=6):
     # type: (Any, Iterable[Any], int) -> Generator[Tuple[int, Any], None, None]
