@@ -207,14 +207,26 @@ function actually_update_users(user_list) {
         return;  // MIT realm doesn't have a presence list
     }
 
-    var users = user_list || presence_info;
-    users = Object.keys(users);
-    users = filter_users_by_search(users);
-    users = _.filter(users, function (email) {
-        return people.get_by_email(email);
-    });
+    var users = presence_info;
+    var all_users = presence_info;
 
-    users = sort_users(users, presence_info);
+    if (user_list !== undefined) {
+        all_users = filter_and_sort(presence_info);
+        users = user_list;
+    }
+
+    users = filter_and_sort(users);
+
+    function filter_and_sort(users) {
+        users = Object.keys(users);
+        users = filter_users_by_search(users);
+        users = _.filter(users, function (email) {
+            return people.get_by_email(email);
+        });
+
+        users = sort_users(users, presence_info);
+        return users;
+    }
 
     function get_num_unread(email) {
         if (unread.suppress_unread_counts) {
@@ -243,7 +255,9 @@ function actually_update_users(user_list) {
     if (user_list !== undefined) {
         // Render right panel partially
         $.each(user_info, function (index, user) {
-            $('#user_presences').find('[data-email=' + user.email + ']').replaceWith(templates.render('user_presence_row', user));
+            var user_index = all_users.indexOf(user.email);
+            $('#user_presences').find('[data-email=' + user.email + ']').remove();
+            $('#user_presences li').eq(user_index + 1).before(templates.render('user_presence_row', user));
         });
     } else {
         $('#user_presences').html(templates.render('user_presence_rows', {users: user_info}));
