@@ -29,7 +29,7 @@ from six.moves import range
 try:
     import simplejson
 except ImportError:
-    import json as simplejson
+    import json as simplejson # type: ignore
 import re
 import time
 import subprocess
@@ -1125,7 +1125,7 @@ or specify the --api-key-file option.""" % (options.api_key_file,))))
             zulip_to_zephyr(options)
             sys.exit(0)
     else:
-        child_pid = None # type: int
+        child_pid = None
     CURRENT_STATE = States.ZephyrToZulip
 
     import zephyr
