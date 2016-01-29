@@ -26,7 +26,6 @@ from typing import *
 import sys
 from six.moves import map
 from six.moves import range
-from typing import *
 try:
     import simplejson
 except ImportError:
