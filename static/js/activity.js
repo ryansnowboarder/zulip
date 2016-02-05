@@ -202,31 +202,29 @@ function filter_users_by_search(users) {
     return filtered_users;
 }
 
+function filter_and_sort(users) {
+    users = Object.keys(users);
+    users = filter_users_by_search(users);
+    users = _.filter(users, function (email) {
+        return people.get_by_email(email);
+    });
+
+    users = sort_users(users, presence_info);
+    return users;
+}
+
 function actually_update_users(user_list) {
     if (page_params.domain === 'mit.edu') {
         return;  // MIT realm doesn't have a presence list
     }
 
     var users = presence_info;
-    var all_users = presence_info;
-
+    var all_users;
     if (user_list !== undefined) {
         all_users = filter_and_sort(presence_info);
         users = user_list;
     }
-
     users = filter_and_sort(users);
-
-    function filter_and_sort(users) {
-        users = Object.keys(users);
-        users = filter_users_by_search(users);
-        users = _.filter(users, function (email) {
-            return people.get_by_email(email);
-        });
-
-        users = sort_users(users, presence_info);
-        return users;
-    }
 
     function get_num_unread(email) {
         if (unread.suppress_unread_counts) {
