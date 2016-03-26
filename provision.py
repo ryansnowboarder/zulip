@@ -77,6 +77,8 @@ REPO_STOPWORDS_PATH = os.path.join(
 
 LOUD = dict(_out=sys.stdout, _err=sys.stderr)
 
+NO_SYMB_LINKS = "--np-bin-files"
+
 
 def main():
     log = logging.getLogger("zulip-provisioner")
@@ -166,7 +168,7 @@ def main():
     # npm install and management commands expect to be run from the root of the project.
     os.chdir(ZULIP_PATH)
 
-    sh.npm.install(**LOUD)
+    sh.npm.install(NO_SYMB_LINKS, **LOUD)
 
     os.system("tools/download-zxcvbn")
     os.system("tools/emoji_dump/build_emoji")
