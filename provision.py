@@ -77,7 +77,7 @@ REPO_STOPWORDS_PATH = os.path.join(
 
 LOUD = dict(_out=sys.stdout, _err=sys.stderr)
 
-NO_SYMB_LINKS = "--np-bin-files"
+NO_SYMB_LINKS = "--no-bin-links"
 
 
 def main():
