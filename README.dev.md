@@ -14,7 +14,7 @@ non-Windows:
 
 Windows:
 --------
-`git clone https://github.com/zulip/zulip.git  -c core.autocrlf=false' 
+`git clone https://github.com/zulip/zulip.git  -c core.autocrlf=false` 
 
 This is to remove Windows line endings, which cause weird errors.
 
