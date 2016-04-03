@@ -30,6 +30,7 @@ such as Mac/Windows via Virtualbox (but everything will be 2-3x slower).
 Ubuntu 15.04 or newer
 ---------------------
 * install and configure the LXC Vagrant provider directly using apt:
+
   ```
   sudo apt-get install vagrant lxc lxc-templates cgroup-lite redir
   vagrant plugin install vagrant-lxc
@@ -38,6 +39,7 @@ Ubuntu 15.04 or newer
 Ubuntu 14.04
 ------------
 *  [download a newer  version of Vagrant][vagrant-dl], and then do the following:
+ 
   ```
   sudo apt-get install lxc lxc-templates cgroup-lite redir
   sudo dpkg -i vagrant*.deb # in directory where you downloaded vagrant
