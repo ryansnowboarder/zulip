@@ -34,12 +34,12 @@ bugdown = None
 MAX_SUBJECT_LENGTH = 60
 MAX_MESSAGE_LENGTH = 10000
 
-# Doing 1000 memcached requests to get_display_recipient is quite slow,
-# so add a local cache as well as the memcached cache.
+# Doing 1000 remote cache requests to get_display_recipient is quite slow,
+# so add a local cache as well as the remote cache cache.
 per_request_display_recipient_cache = {}
 def get_display_recipient_by_id(recipient_id, recipient_type, recipient_type_id):
     if recipient_id not in per_request_display_recipient_cache:
-        result = get_display_recipient_memcached(recipient_id, recipient_type, recipient_type_id)
+        result = get_display_recipient_remote_cache(recipient_id, recipient_type, recipient_type_id)
         per_request_display_recipient_cache[recipient_id] = result
     return per_request_display_recipient_cache[recipient_id]
 
@@ -58,7 +58,7 @@ def flush_per_request_caches():
 
 @cache_with_key(lambda *args: display_recipient_cache_key(args[0]),
                 timeout=3600*24*7)
-def get_display_recipient_memcached(recipient_id, recipient_type, recipient_type_id):
+def get_display_recipient_remote_cache(recipient_id, recipient_type, recipient_type_id):
     """
     returns: an appropriate object describing the recipient.  For a
     stream this will be the stream name as a string.  For a huddle or
@@ -252,16 +252,16 @@ class RealmFilter(models.Model):
 def get_realm_filters_cache_key(domain):
     return 'all_realm_filters:%s' % (domain,)
 
-# We have a per-process cache to avoid doing 1000 memcached queries during page load
+# We have a per-process cache to avoid doing 1000 remote cache queries during page load
 per_request_realm_filters_cache = {}
 def realm_filters_for_domain(domain):
     domain = domain.lower()
     if domain not in per_request_realm_filters_cache:
-        per_request_realm_filters_cache[domain] = realm_filters_for_domain_memcached(domain)
+        per_request_realm_filters_cache[domain] = realm_filters_for_domain_remote_cache(domain)
     return per_request_realm_filters_cache[domain]
 
 @cache_with_key(get_realm_filters_cache_key, timeout=3600*24*7)
-def realm_filters_for_domain_memcached(domain):
+def realm_filters_for_domain_remote_cache(domain):
     filters = []
     for realm_filter in RealmFilter.objects.filter(realm=get_realm(domain)):
        filters.append((realm_filter.pattern, realm_filter.url_format_string))
@@ -432,7 +432,7 @@ def receives_offline_notifications(user_profile):
              user_profile.enable_offline_push_notifications) and
             not user_profile.is_bot)
 
-# Make sure we flush the UserProfile object from our memcached
+# Make sure we flush the UserProfile object from our remote cache
 # whenever we save it.
 post_save.connect(flush_user_profile, sender=UserProfile)
 
@@ -550,6 +550,13 @@ post_delete.connect(flush_stream, sender=Stream)
 def valid_stream_name(name):
     return name != ""
 
+# The Recipient table is used to map Messages to the set of users who
+# received the message.  It is implemented as a set of triples (id,
+# type_id, type). We have 3 types of recipients: Huddles (for group
+# private messages), UserProfiles (for 1:1 private messages), and
+# Ttreams. The recipient table maps a globally unique recipient id
+# (used by the Message table) to the type-specific unique id (the
+# stream id, user_profile id, or huddle id).
 class Recipient(models.Model):
     type_id = models.IntegerField(db_index=True)
     type = models.PositiveSmallIntegerField(db_index=True)
@@ -581,7 +588,7 @@ class Client(models.Model):
 get_client_cache = {}
 def get_client(name):
     if name not in get_client_cache:
-        result = get_client_memcached(name)
+        result = get_client_remote_cache(name)
         get_client_cache[name] = result
     return get_client_cache[name]
 
@@ -589,7 +596,7 @@ def get_client_cache_key(name):
     return 'get_client:%s' % (make_safe_digest(name),)
 
 @cache_with_key(get_client_cache_key, timeout=3600*24*7)
-def get_client_memcached(name):
+def get_client_remote_cache(name):
     (client, _) = Client.objects.get_or_create(name=name)
     return client
 
@@ -1023,6 +1030,19 @@ def get_context_for_message(message):
     ).order_by('-id')[:10]
 
 
+# Whenever a message is sent, for each user current subscribed to the
+# corresponding Recipient object, we add a row to the UserMessage
+# table, which has has columns (id, user profile id, message id,
+# flags) indicating which messages each user has received.  This table
+# allows us to quickly query any user's last 1000 messages to generate
+# the home view.
+#
+# Additionally, the flags field stores metadata like whether the user
+# has read the message, starred the message, collapsed or was
+# mentioned the message, etc.
+#
+# UserMessage is the largest table in a Zulip installation, even
+# though each row is only 4 integers.
 class UserMessage(models.Model):
     user_profile = models.ForeignKey(UserProfile)
     message = models.ForeignKey(Message)
@@ -1104,6 +1124,12 @@ def get_prereg_user_by_email(email):
     # invite.
     return PreregistrationUser.objects.filter(email__iexact=email.strip()).latest("invited_at")
 
+# The Huddle class represents a group of individuals who have had a
+# Group Private Message conversation together.  The actual membership
+# of the Huddle is stored in the Subscription table just like with
+# Streams, and a hash of that list is stored in the huddle_hash field
+# below, to support efficiently mapping from a set of users to the
+# corresponding Huddle object.
 class Huddle(models.Model):
     # TODO: We should consider whether using
     # CommaSeparatedIntegerField would be better.
