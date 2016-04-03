@@ -30,7 +30,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
   end
 
-  config.vm.provider "virtualbox" do |vb, override|
+  config.vm.provider "virtualbox" do |v,vb, override|
+    v.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/v-root", "1"]
     override.vm.box = "ubuntu/trusty64"
     # 2GiB seemed reasonable here. The VM OOMs with only 1024MiB.
     vb.memory = 2048
