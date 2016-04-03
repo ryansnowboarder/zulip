@@ -80,7 +80,12 @@ on Windows (we're working on it). Vagrant needs to download the Ubuntu
 Trusty base image, but later you can run `vagrant destroy` and then
 `vagrant up` again to rebuild the environment and it will be much faster. 
 
-Once that finishes, you can run the development server as follows:
+On Windows,  run `npm install --no-bin-links`, and scroll to the
+"All Systems" instructions located way far below. Start from after
+`npm install`. The problem is symbolic linking is being attempted 
+on Windows and crashes `vagrant up`. 
+
+Once `vagrant up` finshes, you can run the development server as follows:
 
 ```
 vagrant ssh -- -L9991:localhost:9991
